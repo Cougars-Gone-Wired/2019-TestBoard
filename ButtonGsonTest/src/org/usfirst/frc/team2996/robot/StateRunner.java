@@ -26,7 +26,7 @@ public class StateRunner {
 		if (counter < states.size()) {
 			State s = states.get(counter);
 			
-			talons.buttonTalon(s.isButtonState());
+			talons.buttonTalon(s.isButton1State(), s.isButton2State());
 			talons.axisTalon(s.getAxisState());
 			
 			counter++;

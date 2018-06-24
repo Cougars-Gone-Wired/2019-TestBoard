@@ -14,7 +14,8 @@ public class StateRecorder {
 	public void record(Controller controller) {
 		State s = new State();
 		
-		s.setButtonState(controller.isButton());
+		s.setButton1State(controller.isButton1());
+		s.setButton1State(controller.isButton2());
 		s.setAxisState(controller.getAxis());
 		
 		states.add(s);

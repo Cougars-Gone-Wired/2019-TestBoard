@@ -3,6 +3,7 @@ package org.usfirst.frc.team2996.robot;
 import java.util.List;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Robot extends IterativeRobot {
 	
@@ -51,7 +52,7 @@ public class Robot extends IterativeRobot {
 	public void teleopPeriodic() {
 		controller.setControllerInputValues();
 		
-		talons.buttonTalon(controller.isButton());
+		talons.buttonTalon(controller.isButton1(), controller.isButton2());
 		talons.axisTalon(controller.getAxis());
 		
 		recorder.record(controller);
@@ -71,13 +72,17 @@ public class Robot extends IterativeRobot {
 				e.printStackTrace();
 			}
 		}
-
-		StateLister.getStateNames(); 
+		StateLister.getStateNames();
+		
+		SmartDashboard.putBoolean("Should Record", false);
 	}
 
 	@Override
 	public void disabledPeriodic() {
 		GsonSmartDash.set();
+		
+		if (!GsonSmartDash.shouldRecord) {
+			SmartDashboard.putString("Gson File Name", "");
+		}
 	}
-	
 }

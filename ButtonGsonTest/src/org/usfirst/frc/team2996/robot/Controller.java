@@ -5,7 +5,8 @@ import edu.wpi.first.wpilibj.Joystick;
 public class Controller {
 
 	Joystick controller;
-	private boolean button;
+	private boolean button1;
+	private boolean button2;
 	private double axis;
 	
 	public Controller() {
@@ -13,12 +14,17 @@ public class Controller {
 	}
 	
 	public void setControllerInputValues() {
-		button = controller.getRawButton(1);
+		button1 = controller.getRawButton(1);
+		button2 = controller.getRawButton(2);
 		axis = controller.getRawAxis(1);
 	}
 
-	public boolean isButton() {
-		return button;
+	public boolean isButton1() {
+		return button1;
+	}
+	
+	public boolean isButton2() {
+		return button2;
 	}
 
 	public double getAxis() {

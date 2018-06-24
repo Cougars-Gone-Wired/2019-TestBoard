@@ -12,17 +12,25 @@ public class Talons {
 		talon2 = new WPI_TalonSRX(1);
 	}
 	
-	public void buttonTalon(boolean button) {
-		if (button) {
-			talon1.set(1);
+	public void buttonTalon(boolean button1, boolean button2) {
+		if (button1) {
+			if (button2) {
+				talon1.set(0);
+			} else {
+				talon1.set(1);
+			}
 		} else {
-			talon1.set(0);
+			if (button2) {
+				talon1.set(-1);
+			} else {
+				talon1.set(0);
+			}
 		}
 	}
 	
 	public void axisTalon(double axis) {
 		if (axis > 0.15 || axis < 0.15) {
-			talon2.set(axis);
+			talon2.set(-axis);
 		} else {
 			talon2.set(0);
 		}
