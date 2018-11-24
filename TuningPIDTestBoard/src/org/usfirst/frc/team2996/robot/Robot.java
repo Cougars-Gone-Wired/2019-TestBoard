@@ -40,14 +40,15 @@ public class Robot extends IterativeRobot {
 	
 	@Override
 	public void robotInit() {
-		masterMotor = new WPI_TalonSRX(0);
+		masterMotor = new WPI_TalonSRX(0); // should be the talon connected to the encoder
 		slaveMotor = new WPI_TalonSRX(1);
 		
-		masterMotor.setSensorPhase(true);
-		masterMotor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 10);
-		masterMotor.configClosedLoopPeakOutput(0, .75, 10);
+		masterMotor.setSensorPhase(true); // should be true if the encoder is negative when the talon is positive
+		masterMotor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 10); // makes the talon's closed loop control modes based off of encoder counts
+		masterMotor.configClosedLoopPeakOutput(0, .75, 10); // middle number modifies the max voltage the talon can reach while in a closed loop
 		
-		slaveMotor.follow(masterMotor);
+		slaveMotor.follow(masterMotor); // used so that both motors follow the encoder and operate using the same PID values
+										// if the master motor is only being manipulated using the liveWindow or putData, the slaveMotor won't move
 		
 		sensors = new SensorCollection(masterMotor);
 		encoder = new Encoder(this);
@@ -100,7 +101,7 @@ public class Robot extends IterativeRobot {
 		zeroSpeed = SmartDashboard.getBoolean("Zero Speed", false);
 		
 		if (zeroEncoder) {
-			sensors.setQuadraturePosition(0, 10);
+			encoder.reset();
 		}
 		
 		if (zeroSpeed) {
@@ -109,12 +110,13 @@ public class Robot extends IterativeRobot {
 		}
 		
 		if (enable) {
+			// PID values only used in closed loop control modes
 			masterMotor.config_kP(0, P, 10);
 			masterMotor.config_kI(0, I, 10);
 			masterMotor.config_kD(0, D, 10);
-			masterMotor.set(ControlMode.Position, desiredPulses);
+			masterMotor.set(ControlMode.Position, desiredPulses); // puts the talon in a closed loop control mode in which it will move based on PID values until the second parameter based on the selected feedback sensor
 		} else {
-			masterMotor.set(motorSpeed);
+			masterMotor.set(motorSpeed); // automatically puts talon back in the PERCENT open loop control mode
 		}
 	}
 
