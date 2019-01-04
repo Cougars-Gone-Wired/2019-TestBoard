@@ -12,13 +12,13 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
-import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
-public class Robot extends IterativeRobot {
+public class Robot extends TimedRobot {
 
-	double P = 0;
+	double P = 0; //.55 low //.125 high
 	double I = 0;
 	double D = 0;
 	
@@ -31,6 +31,9 @@ public class Robot extends IterativeRobot {
 	
 	double motorSpeed = 0;
 	boolean zeroSpeed = false;
+	
+	boolean testVelocity = false;
+	double counter = 0;
 	
 	private WPI_TalonSRX masterMotor;
 	private WPI_TalonSRX slaveMotor;
@@ -52,6 +55,8 @@ public class Robot extends IterativeRobot {
 		
 		sensors = new SensorCollection(masterMotor);
 		encoder = new Encoder(this);
+		
+		setPeriod(0.05);
 	}
 
 	@Override
@@ -75,6 +80,8 @@ public class Robot extends IterativeRobot {
 		
 		SmartDashboard.putNumber("Motors", motorSpeed);
 		SmartDashboard.putBoolean("Zero Speed", zeroSpeed);
+		
+		SmartDashboard.putBoolean("Test Velocity", testVelocity);
 	}
 	
 	@Override
@@ -100,6 +107,9 @@ public class Robot extends IterativeRobot {
 		motorSpeed = SmartDashboard.getNumber("Motors", 0);
 		zeroSpeed = SmartDashboard.getBoolean("Zero Speed", false);
 		
+		testVelocity = SmartDashboard.getBoolean("Test Velocity", false);
+		SmartDashboard.putNumber("time", counter);
+		
 		if (zeroEncoder) {
 			encoder.reset();
 		}
@@ -115,14 +125,26 @@ public class Robot extends IterativeRobot {
 			masterMotor.config_kI(0, I, 10);
 			masterMotor.config_kD(0, D, 10);
 			masterMotor.set(ControlMode.Position, desiredPulses); // puts the talon in a closed loop control mode in which it will move based on PID values until the second parameter based on the selected feedback sensor
+		} else if (testVelocity) {
+			if (counter < 10) {
+				masterMotor.set(0.95);
+				SmartDashboard.putNumber("Velocity", encoder.getDistanceFeet() / counter);
+			} else {
+				testVelocity = false;
+				SmartDashboard.putBoolean("Test Velocity", testVelocity);
+			}
+			counter += 0.05;
 		} else {
+			counter = 0;
 			masterMotor.set(motorSpeed); // automatically puts talon back in the PERCENT open loop control mode
 		}
+		
 	}
 
 	@Override 
 	public void disabledInit() {
 		encoder.reset();
+		counter = 0;
 	}
 	
 	@Override
